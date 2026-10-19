@@ -53,11 +53,11 @@
 .product .plant-picker label,.product .observation-header .picker-library{font-size:11px}
 .product .observation-header .picker-row select,.product .observation-header .picker-row button{min-height:42px}
 .product .observation-parts .organ-tabs button{font-size:12px;min-height:41px}
-.product .comparison-stage{grid-template-columns:minmax(0,1.12fr) minmax(0,1fr)}
-.product .photo-section{order:-1;border-left:0;border-right:1px solid var(--line);padding:22px}
-.product .photo-open img{height:325px}.product .photo-enlarge{font-size:11px}
-.product .comparison-photo-heading h3{font-size:20px}
-.product .reference-photo figcaption strong{font-size:13px}
+.product .comparison-stage{grid-template-columns:minmax(0,2.2fr) minmax(250px,.9fr)}
+.product .photo-section{order:0;border-left:1px solid var(--line);border-right:0;padding:18px;background:var(--bg)}
+.product .photo-open img{height:190px}.product .photo-enlarge{font-size:11px}
+.product .comparison-photo-heading h3{font:500 14px/1.6 "PingFang SC",sans-serif;color:var(--muted)}
+.product .reference-photo figcaption strong{font-size:11px}
 .product .photo-details,.product .photo-thumb span{font-size:11px}
 .product .photo-observation p{font-size:12px}.product .photo-observation .part-tag{font-size:12px}
 .product .photo-boundary{font-size:10px;line-height:1.8}
@@ -80,7 +80,7 @@
 .practice-photo-panel{padding:24px;border-right:1px solid var(--line);min-width:0}
 .practice-photo-label{display:flex;justify-content:space-between;gap:15px;font-size:12px;color:var(--muted);margin-bottom:15px}
 .practice-photo-label>span:first-child{color:var(--green)}
-.question-photo{display:block;width:100%;height:425px;object-fit:contain;background:var(--soft)}
+.question-photo{display:block;width:100%;height:120px;object-fit:contain;background:var(--soft)}
 .question-photo-open{position:relative;width:100%;display:block;border:1px solid var(--line);padding:0;background:var(--soft);cursor:zoom-in}
 .question-credit{display:flex;flex-wrap:wrap;gap:5px 12px;margin-top:12px;font-size:10px;line-height:1.8;color:var(--muted);overflow-wrap:anywhere}
 .question-context{font-size:11px;color:var(--muted);line-height:1.7;margin:12px 0 0}
@@ -106,5 +106,51 @@
 .round-summary{max-width:760px;margin:20px auto;padding:28px;background:var(--paper);border:1px solid var(--line)}
 .round-heading{text-align:center;margin-bottom:26px}.round-heading h2{font:500 28px/1.5 "Songti SC",serif;margin:10px 0}.round-heading strong{color:var(--green);font-size:36px;font-weight:500}.round-heading p{font-size:13px;color:var(--muted)}
 .round-list{display:grid;gap:10px}.review-row{display:grid;grid-template-columns:72px 1fr 20px;align-items:center;gap:16px;padding:12px;border:1px solid var(--line);text-decoration:none}.review-row>img{width:72px;height:72px;object-fit:cover}.review-row strong{display:block;font:500 20px/1.4 "Songti SC",serif}.review-row div>span{font-size:11px;color:var(--accent);display:block;margin-top:4px}.review-row p{font-size:11px;color:var(--muted);margin:5px 0 0}.round-actions{display:flex;justify-content:center;gap:22px;align-items:center;margin-top:25px}
-@media(max-width:1000px){.product .page{padding:20px 25px}.product .catalog-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.product .observation-header{gap:16px;grid-template-columns:1fr 1fr}.product .observation-parts{grid-column:1/-1}.question-photo{height:350px}.practice-answer-panel{padding:22px}.practice-photo-panel{padding:20px}.product .lab>.side{grid-template-columns:135px minmax(0,1fr)}.product .lab>.side .season-now{grid-column:2;grid-row:5}.product .lab>.side .plant-source{grid-column:1/-1;grid-row:6}}
-@media(max-width:640px){.product .page{padding:15px 16px 25px}.product .masthead{padding-bottom:13px}.product .brand{font-size:16px;gap:7px}.product .brand svg{width:25px;height:25px}.product .brand small{font-size:9px}.product .mast-right{gap:16px}.product .nav{gap:18px;font-size:12px}.product .theme{width:32px;height:32px}.find-heading,.practice-heading{display:block;padding:24px 0 20px}.find-heading h1,.practice-heading h1{font-size:29px}.find-heading p,.practice-heading p{font-size:12px;line-height:1.8}.practice-entry{display:block;border-left:0;border-top:1px solid var(--line);padding:15px 0 0;margin-top:19px}.practice-entry>span{display:inline;margin-right:8px;font-size:10px}.practice-entry strong{font-size:12px}.practice-entry b{margin-left:8px}.product .catalog-toolbar{padding:13px;gap:12px}.product .search-wrap input{min-height:48px;font-size:14px}.product .search-wrap input::placeholder{font-size:11px}.feature-shortcuts{gap:4px;font-size:10px}.feature-shortcuts button{font-size:11px;padding:3px 5px}.product .catalog-filters{padding-top:12px;gap:6px}.product .catalog-filters button{min-height:36px;padding:6px 9px;font-size:11px}.product .catalog-meta{font-size:11px;margin:17px 0 12px}.product .catalog-meta>span{font-size:10px}.product .catalog-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.product .catalog-photo img{height:145px}.product .catalog-card-copy{padding:12px 11px}.product .catalog-card h3{font-size:20px;margin-bottom:7px}.product .catalog-card-copy>p{font-size:11px;margin-bottom:10px}.product .evidence-badge{font-size:9px}.product .catalog-photo>span{left:8px;bottom:8px;font-size:9px;padding:3px 7px}.product .catalog-boundary{font-size:10px}.detail-topline{padding:18px 0;font-size:12px}.product .observation-header{padding:16px;gap:16px}.product .observation-identity .plant-heading h1{font-size:27px}.product .observation-identity .family,.product .observation-identity .latin{font-size:10px}.product .observation-header .picker-library{font-size:10px}.product .plant-picker label{font-size:10px}.product .observation-header .picker-row select{font-size:12px}.product .comparison-stage{grid-template-columns:1fr}.product .photo-section{border-right:0;border-top:0;border-bottom:1px solid var(--line);padding:16px}.product .photo-open img{height:280px}.product .lab>.side{padding:18px 16px;grid-template-columns:90px minmax(0,1fr);column-gap:14px}.product .lab>.side .part-preview svg{width:90px;height:100px}.product .lab>.side .part-title{font-size:20px}.product .lab>.side .part-body,.product .lab>.side .season-now p{font-size:12px}.product .lab>.side .part-preview .part-tag{font-size:9px}.product .lab>.side .part-preview .micro{font-size:8px}.product .year-card{padding:12px}.product .year-card p{font-size:10px}.product .caption{display:block;font-size:9px}.product .caption p:last-child{text-align:left}.product .location-strip{gap:7px;margin-top:20px;padding-top:16px}.practice-heading .text-button{display:inline-block;margin-top:13px;font-size:12px}.practice-progress{padding:14px;gap:12px;font-size:11px}.practice-progress progress{max-width:100px}.practice-layout{grid-template-columns:1fr}.practice-photo-panel{border-right:0;border-bottom:1px solid var(--line);padding:16px}.question-photo{height:285px}.practice-photo-label{font-size:11px;margin-bottom:11px}.question-credit{font-size:9px}.question-context{font-size:10px}.practice-answer-panel{padding:20px 16px}.practice-answer-panel>h2{font-size:25px}.practice-answer-panel .answer-options button{font-size:13px}.answer-diagram img,.answer-diagram svg{height:130px}.round-summary{padding:20px 15px}.round-heading h2{font-size:24px}.round-heading strong{font-size:30px}.review-row{grid-template-columns:60px 1fr 16px;padding:10px;gap:12px}.review-row>img{width:60px;height:65px}.review-row strong{font-size:19px}.round-actions{gap:17px}.round-actions .primary-action{padding:12px 16px}.round-actions .text-button{font-size:12px}.product .footer{font-size:10px;gap:10px 18px}}
+@media(max-width:1000px){.product .page{padding:20px 25px}.product .catalog-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.product .observation-header{gap:16px;grid-template-columns:1fr 1fr}.product .observation-parts{grid-column:1/-1}.question-photo{height:110px}.practice-answer-panel{padding:22px}.practice-photo-panel{padding:20px}.product .lab>.side{grid-template-columns:135px minmax(0,1fr)}.product .lab>.side .season-now{grid-column:2;grid-row:5}.product .lab>.side .plant-source{grid-column:1/-1;grid-row:6}}
+@media(max-width:640px){.product .page{padding:15px 16px 25px}.product .masthead{padding-bottom:13px}.product .brand{font-size:16px;gap:7px}.product .brand svg{width:25px;height:25px}.product .brand small{font-size:9px}.product .mast-right{gap:16px}.product .nav{gap:18px;font-size:12px}.product .theme{width:32px;height:32px}.find-heading,.practice-heading{display:block;padding:24px 0 20px}.find-heading h1,.practice-heading h1{font-size:29px}.find-heading p,.practice-heading p{font-size:12px;line-height:1.8}.practice-entry{display:block;border-left:0;border-top:1px solid var(--line);padding:15px 0 0;margin-top:19px}.practice-entry>span{display:inline;margin-right:8px;font-size:10px}.practice-entry strong{font-size:12px}.practice-entry b{margin-left:8px}.product .catalog-toolbar{padding:13px;gap:12px}.product .search-wrap input{min-height:48px;font-size:14px}.product .search-wrap input::placeholder{font-size:11px}.feature-shortcuts{gap:4px;font-size:10px}.feature-shortcuts button{font-size:11px;padding:3px 5px}.product .catalog-filters{padding-top:12px;gap:6px}.product .catalog-filters button{min-height:36px;padding:6px 9px;font-size:11px}.product .catalog-meta{font-size:11px;margin:17px 0 12px}.product .catalog-meta>span{font-size:10px}.product .catalog-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.product .catalog-photo img{height:145px}.product .catalog-card-copy{padding:12px 11px}.product .catalog-card h3{font-size:20px;margin-bottom:7px}.product .catalog-card-copy>p{font-size:11px;margin-bottom:10px}.product .evidence-badge{font-size:9px}.product .catalog-photo>span{left:8px;bottom:8px;font-size:9px;padding:3px 7px}.product .catalog-boundary{font-size:10px}.detail-topline{padding:18px 0;font-size:12px}.product .observation-header{padding:16px;gap:16px}.product .observation-identity .plant-heading h1{font-size:27px}.product .observation-identity .family,.product .observation-identity .latin{font-size:10px}.product .observation-header .picker-library{font-size:10px}.product .plant-picker label{font-size:10px}.product .observation-header .picker-row select{font-size:12px}.product .comparison-stage{grid-template-columns:1fr}.product .photo-section{border-left:0;border-right:0;border-top:1px solid var(--line);border-bottom:0;padding:16px}.product .photo-open img{height:160px}.product .lab>.side{padding:18px 16px;grid-template-columns:90px minmax(0,1fr);column-gap:14px}.product .lab>.side .part-preview svg{width:90px;height:100px}.product .lab>.side .part-title{font-size:20px}.product .lab>.side .part-body,.product .lab>.side .season-now p{font-size:12px}.product .lab>.side .part-preview .part-tag{font-size:9px}.product .lab>.side .part-preview .micro{font-size:8px}.product .year-card{padding:12px}.product .year-card p{font-size:10px}.product .caption{display:block;font-size:9px}.product .caption p:last-child{text-align:left}.product .location-strip{gap:7px;margin-top:20px;padding-top:16px}.practice-heading .text-button{display:inline-block;margin-top:13px;font-size:12px}.practice-progress{padding:14px;gap:12px;font-size:11px}.practice-progress progress{max-width:100px}.practice-layout{grid-template-columns:1fr}.practice-photo-panel{border-right:0;border-bottom:1px solid var(--line);padding:16px}.question-photo{height:100px}.practice-photo-label{font-size:11px;margin-bottom:11px}.question-credit{font-size:9px}.question-context{font-size:10px}.practice-answer-panel{padding:20px 16px}.practice-answer-panel>h2{font-size:25px}.practice-answer-panel .answer-options button{font-size:13px}.answer-diagram img,.answer-diagram svg{height:130px}.round-summary{padding:20px 15px}.round-heading h2{font-size:24px}.round-heading strong{font-size:30px}.review-row{grid-template-columns:60px 1fr 16px;padding:10px;gap:12px}.review-row>img{width:60px;height:65px}.review-row strong{font-size:19px}.round-actions{gap:17px}.round-actions .primary-action{padding:12px 16px}.round-actions .text-button{font-size:12px}.product .footer{font-size:10px;gap:10px 18px}}
+
+
+/* Read the structure first; use photographs as a supporting reference. */
+.product .catalog-photo{background:var(--paper)}
+.product .catalog-illustration{display:block;width:100%;height:185px;padding:9px 38px 5px 10px}
+.product .catalog-photo>.catalog-kind{top:10px;bottom:auto;left:10px;background:transparent;padding:0;font-size:10px;color:var(--muted)}
+.product .catalog-photo>.catalog-reference{left:auto;right:10px;bottom:10px;top:auto;padding:3px;background:var(--paper);border:1px solid var(--line)}
+.product .catalog-reference img{width:50px;height:50px;object-fit:cover}
+.product .catalog-reference small{display:block;font-size:8px;line-height:1.6;text-align:center;color:var(--muted)}
+.diagram-panel{display:flex;flex-direction:column;min-width:0}
+.product .comparison-stage .iso-plate{min-height:490px}
+.product .comparison-stage .iso-stage{height:490px;min-height:0}
+.product .comparison-stage .iso-svg{height:100%;max-height:490px;object-fit:contain}
+.question-art{display:flex;align-items:center;justify-content:center;min-height:320px;background:var(--bg)}
+.question-art svg{display:block;width:100%;max-width:400px;height:320px}
+.question-reference{display:grid;grid-template-columns:120px minmax(0,1fr);gap:8px 15px;margin-top:18px;border-top:1px solid var(--line);padding-top:14px}
+.reference-label{grid-column:1/-1;font-size:11px;color:var(--muted)}
+.question-reference .question-photo-open{grid-column:1;grid-row:2/4}
+.question-reference .question-credit{grid-column:2;grid-row:2;margin-top:0;font-size:9px;display:block}
+.question-reference .question-credit a{display:inline-block;margin:4px 7px 0 0}
+.question-reference .question-context{grid-column:2;grid-row:3;margin:0;font-size:10px}
+.question-reference .photo-enlarge{font-size:9px;padding:3px 5px;right:4px;bottom:4px}
+.product .answer-diagram{grid-template-columns:minmax(0,1.8fr) minmax(0,1fr)}
+.product .answer-diagram svg{height:160px}
+.product .answer-diagram img{height:95px}
+.product .answer-diagram figure:nth-child(2){align-self:center}
+.review-ink{display:block;width:72px;height:72px;background:var(--bg)}
+.review-ink svg{display:block;width:100%;height:100%}
+@media(max-width:760px){
+ .product .comparison-stage{grid-template-columns:minmax(0,1fr)}
+ .product .comparison-stage .iso-plate{min-height:320px}
+ .product .comparison-stage .iso-stage{height:320px;min-height:0}
+ .product .comparison-stage .iso-svg{max-height:320px}
+ .product .photo-section{border-left:0;border-top:1px solid var(--line)}
+ .product .photo-open img{height:160px}
+}
+@media(max-width:640px){
+ .product .catalog-illustration{height:155px;padding:14px 25px 5px 5px}
+ .product .catalog-reference img{width:39px;height:39px}
+ .product .catalog-photo>.catalog-reference{right:7px;bottom:7px;padding:2px}
+ .product .catalog-photo>.catalog-kind{font-size:9px;top:8px;left:8px}
+ .question-art{min-height:250px}.question-art svg{height:250px;max-width:290px}
+ .question-reference{grid-template-columns:100px minmax(0,1fr);gap:8px 12px;margin-top:15px}
+ .product .answer-diagram svg{height:145px}.product .answer-diagram img{height:85px}
+ .review-ink{width:60px;height:65px}
+}
