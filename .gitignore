@@ -9,3 +9,7 @@ node_modules/
 /taoranting-dark.svg
 /taoranting-plant-catalog.csv
 /qa-gallery-*.html
+/.photo-work/
+/test-results/
+
+/output/

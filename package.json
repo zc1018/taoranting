@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "node build.mjs && node scripts/publish.mjs",
-    "audit": "node build.mjs --audit"
+    "audit": "node build.mjs --audit",
+    "test:photos": "node tests/photo-catalog.mjs"
   },
   "engines": {
     "node": ">=20.10"

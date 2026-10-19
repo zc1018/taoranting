@@ -1,7 +1,7 @@
 (()=>{
  const {plants,seasons,organs,organContext,plantSources,quizItems}=MODEL,q=s=>document.querySelector(s),qa=s=>[...document.querySelectorAll(s)];
  const stage=q('.iso-stage'),svg=stage.querySelector('svg'),reduced=matchMedia('(prefers-reduced-motion: reduce)'),P=window.TAORAN_PROJECTION;
- const state={plant:0,season:2,organ:'leaf',playing:!reduced.matches,visible:false,hover:false,frame:0,last:0,clock:0,angle:Math.PI,targetAngle:Math.PI};
+ const state={plant:0,season:2,organ:'leaf',playing:!reduced.matches,visible:false,hover:false,frame:0,last:0,clock:0,angle:Math.PI,targetAngle:Math.PI,photo:0};
  let plates=qa('[data-botanical-plate]').map(el=>({el,key:el.dataset.botanicalPlate,alpha:1}));
  const plateTemplate=plates[0].el.cloneNode(true),plateParent=plates[0].el.parentNode;
  function ensurePlate(){const key=state.plant+'-'+state.season;if(plates.some(p=>p.key===key))return;const el=plateTemplate.cloneNode(true);el.dataset.botanicalPlate=key;el.setAttribute('opacity','0');el.querySelector('.botanical').outerHTML=BOTANY.branchInk(state.plant,state.season);plateParent.append(el);plates.push({el,key,alpha:0});}
@@ -21,8 +21,31 @@
  }
  function syncPlay(){q('#tour').setAttribute('aria-pressed',String(state.playing));q('[data-tour-label]').textContent=state.playing?'暂停轮播':'四季轮播';q('#tour span:first-child').textContent=state.playing?'Ⅱ':'▷';}
  function stopTour(){state.playing=false;state.clock=0;syncPlay();}
+ let photoPlant=null,photoOrgan=null,photoFigureKey=null;
+ function syncPhotos(){
+  const p=plants[state.plant],record=PHOTO_CATALOG[p.id],organName=organs.find(o=>o.id===state.organ).name;
+  if(photoPlant!==p.id){
+   state.photo=PHOTO_VIEW.preferredPhotoIndex(record,state.organ);photoPlant=p.id;photoOrgan=state.organ;
+   q('[data-photo-name]').textContent=p.name;
+   q('[data-photo-subject]').textContent='照片对象：'+record.subject;
+   q('[data-photo-scope]').textContent=record.representative?'类群代表照片；具体种、品种见来源。':'同种植物实拍。';
+   q('[data-photo-content]').innerHTML=PHOTO_VIEW.photoCardsHtml(p,record,state.photo);
+   photoFigureKey=p.id+'-'+state.photo;
+  }else if(photoOrgan!==state.organ){
+   state.photo=PHOTO_VIEW.preferredPhotoIndex(record,state.organ,state.photo);photoOrgan=state.organ;
+  }
+  const photo=record.photos[state.photo],figureKey=p.id+'-'+state.photo;
+  if(photoFigureKey!==figureKey){q('[data-photo-current]').innerHTML=PHOTO_VIEW.photoFigureHtml(p,record,state.photo);photoFigureKey=figureKey;}
+  qa('[data-photo-select]').forEach(button=>button.setAttribute('aria-pressed',String(Number(button.dataset.photoSelect)===state.photo)));
+  q('[data-photo-position]').textContent=(state.photo+1)+' / '+record.photos.length;
+  const matches=photo.organs.includes(state.organ),available=record.photos.some(p=>p.organs.includes(state.organ));
+  q('[data-photo-focus]').textContent=(matches?'图版 × 实拍 · ':'图版观察 · ')+organName;
+  q('[data-photo-status]').textContent=matches?'在这张实拍里对照'+organName+'的实际形态，再结合图版和辨认线索核对。':available?'这张照片未清晰展示'+organName+'；点另一张照片可对照当前部位。':'现有两张实拍未覆盖'+organName+'的清晰细节，当前照片保留作形态参考。';
+  q('.photo-observation').dataset.matched=String(matches);
+ }
  function describe(){
   const p=plants[state.plant],part=p.part[state.organ];
+  syncPhotos();
   ensurePlate();q('#plant-picker').value=String(state.plant);
   const source=plantSources[p.source];q('[data-source-link]').textContent=source.title;q('[data-source-link]').href=source.url;q('[data-evidence]').textContent=p.status||'公园资料';
   q('[data-plant-position]').textContent=String(state.plant+1).padStart(2,'0')+' / '+plants.length;
@@ -118,7 +141,22 @@
  q('#clear-search').addEventListener('click',()=>{q('#plant-search').value='';catalogExpanded=false;filterCatalog();q('#plant-search').focus();});
  qa('[data-category]').forEach(b=>b.addEventListener('click',()=>{stopTour();catalogCategory=b.dataset.category;catalogExpanded=false;filterCatalog();}));
  q('#catalog-more').addEventListener('click',()=>{stopTour();catalogExpanded=true;filterCatalog();});
- catalogCards.forEach(card=>card.addEventListener('click',()=>{q('#observe').scrollIntoView({block:'start',behavior:reduced.matches?'auto':'smooth'});stage.focus({preventScroll:true});}));
+ catalogCards.forEach(card=>card.addEventListener('click',()=>{q('#observe').scrollIntoView({block:'start',behavior:reduced.matches?'auto':'smooth'});q('#plant-picker').focus({preventScroll:true});}));
+ const photoDialog=q('#photo-dialog');let photoOpener=null;
+ q('[data-photo-content]').addEventListener('click',event=>{
+  const thumbnail=event.target.closest('[data-photo-select]');
+  if(thumbnail){stopTour();state.photo=Number(thumbnail.dataset.photoSelect);syncPhotos();return;}
+  const opener=event.target.closest('[data-photo-index]');if(!opener)return;
+  const plant=plants[state.plant],record=PHOTO_CATALOG[plant.id],photo=record.photos[Number(opener.dataset.photoIndex)];
+  stopTour();photoOpener=opener;
+  q('#photo-dialog-title').textContent=plant.name+' · '+photo.caption;
+  q('[data-photo-full]').src=photo.src;q('[data-photo-full]').alt=record.subject+'实拍：'+photo.caption;
+  q('[data-photo-caption]').textContent='照片对象：'+record.subject+'。摄影：'+photo.author+' · '+photo.license+'。'+(record.representative?'类群代表照片，园内具体种与品种请核对树牌。':'非陶然亭现场实拍。');
+  q('[data-photo-source]').href=photo.source;photoDialog.showModal();document.body.classList.add('photo-modal-open');
+ });
+ photoDialog.querySelector('.photo-close').addEventListener('click',()=>photoDialog.close());
+ photoDialog.addEventListener('click',event=>{if(event.target===photoDialog){const r=photoDialog.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)photoDialog.close();}});
+ photoDialog.addEventListener('close',()=>{document.body.classList.remove('photo-modal-open');if(photoOpener?.isConnected)photoOpener.focus({preventScroll:true});});
  filterCatalog();
 
  describe();loadNote();renderQuiz();draw();run();
