@@ -1,0 +1,125 @@
+(()=>{
+ const {plants,seasons,organs,organContext,plantSources,quizItems}=MODEL,q=s=>document.querySelector(s),qa=s=>[...document.querySelectorAll(s)];
+ const stage=q('.iso-stage'),svg=stage.querySelector('svg'),reduced=matchMedia('(prefers-reduced-motion: reduce)'),P=window.TAORAN_PROJECTION;
+ const state={plant:0,season:2,organ:'leaf',playing:!reduced.matches,visible:false,hover:false,frame:0,last:0,clock:0,angle:Math.PI,targetAngle:Math.PI};
+ let plates=qa('[data-botanical-plate]').map(el=>({el,key:el.dataset.botanicalPlate,alpha:1}));
+ const plateTemplate=plates[0].el.cloneNode(true),plateParent=plates[0].el.parentNode;
+ function ensurePlate(){const key=state.plant+'-'+state.season;if(plates.some(p=>p.key===key))return;const el=plateTemplate.cloneNode(true);el.dataset.botanicalPlate=key;el.setAttribute('opacity','0');el.querySelector('.botanical').outerHTML=BOTANY.branchInk(state.plant,state.season);plateParent.append(el);plates.push({el,key,alpha:0});}
+ const dial=q('[data-dial-marks]'),lens=q('[data-lens-ink]');let manual=false,storageOK=true,notes={},drafts={};
+ let lensKey='0-2-leaf',lensLayers=[{el:lens.firstElementChild,key:lensKey,alpha:1}];
+ const storageKey='taoranting-botany-observations-v1',form=q('#note-form');
+ const today=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;};
+ try{const saved=JSON.parse(localStorage.getItem(storageKey)||'{}');if(saved&&typeof saved==='object'&&!Array.isArray(saved))notes=saved;}catch{storageOK=false;}
+ const key=()=>`${state.plant}-${state.season}`;
+ const draft=()=>{drafts[key()]={place:form.place.value,date:form.date.value,note:form.note.value};};
+ function loadNote(){
+  const record=drafts[key()]||notes[key()]||{};form.place.value=typeof record.place==='string'?record.place.slice(0,100):'';form.date.value=/^\d{4}-\d{2}-\d{2}$/.test(record.date||'')?record.date:today();form.note.value=typeof record.note==='string'?record.note.slice(0,1000):'';
+  q('[data-note-status]').textContent=notes[key()]?'已载入这一季的记录':storageOK?'仅保存在当前浏览器':'当前浏览器不能保存，记录暂留本页';
+  q('[data-record-scope]').textContent=`${plants[state.plant].name} / ${seasons[state.season].name} · 跟随当前选择`;
+  q('[data-next-visit]').textContent=plants[state.plant].follow[state.season];
+  qa('[data-record-season]').forEach(b=>{const s=Number(b.dataset.recordSeason),saved=Boolean(notes[`${state.plant}-${s}`]);b.dataset.saved=String(saved);b.setAttribute('aria-current',String(s===state.season));b.setAttribute('aria-label',`${seasons[s].name}季，${saved?'已有记录':'尚无记录'}`);});
+ }
+ function syncPlay(){q('#tour').setAttribute('aria-pressed',String(state.playing));q('[data-tour-label]').textContent=state.playing?'暂停轮播':'四季轮播';q('#tour span:first-child').textContent=state.playing?'Ⅱ':'▷';}
+ function stopTour(){state.playing=false;state.clock=0;syncPlay();}
+ function describe(){
+  const p=plants[state.plant],part=p.part[state.organ];
+  ensurePlate();q('#plant-picker').value=String(state.plant);
+  const source=plantSources[p.source];q('[data-source-link]').textContent=source.title;q('[data-source-link]').href=source.url;q('[data-evidence]').textContent=p.status||'公园资料';
+  q('[data-plant-position]').textContent=String(state.plant+1).padStart(2,'0')+' / '+plants.length;
+  qa('[data-plant]').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.plant)===state.plant)));
+  for(const selector of ['[data-season]','[data-year]'])qa(selector).forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.season??b.dataset.year)===state.season)));
+  qa('[data-organ]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.organ===state.organ)));
+  q('[data-plant-name]').textContent=p.name;q('[data-family]').textContent=p.family;q('[data-latin]').textContent=p.latin;q('[data-identity]').textContent=p.identity||'';q('[data-identity]').hidden=!p.identity;
+  q('[data-part-art]').innerHTML=BOTANY.organSvg(state.plant,state.organ,state.season);
+  const nextLens=`${state.plant}-${state.season}-${state.organ}`;
+  if(nextLens!==lensKey){lensKey=nextLens;if(!lensLayers.some(layer=>layer.key===lensKey)){const layer=document.createElementNS('http://www.w3.org/2000/svg','g');layer.innerHTML=BOTANY.organInk(state.plant,state.organ,state.season);layer.setAttribute('opacity','0');lens.append(layer);lensLayers.push({el:layer,key:lensKey,alpha:0});}}
+  q('[data-part-tag]').textContent=part[2];q('[data-organ-context]').textContent=organContext(state.plant,state.season,state.organ);
+  q('[data-part-title]').textContent=part[0];q('[data-part-body]').textContent=part[1];q('[data-season-label]').textContent=`此刻翻到 · ${seasons[state.season].name}`;q('[data-season-text]').textContent=p.seasonText[state.season];
+  q('[data-location]').textContent=p.location;
+  qa('[data-year-art]').forEach(el=>el.innerHTML=BOTANY.branchInk(state.plant,Number(el.dataset.yearArt)));
+  qa('[data-year-text]').forEach(el=>el.textContent=p.seasonText[Number(el.dataset.yearText)]);qa('[data-year]').forEach(el=>{const s=Number(el.dataset.year);el.querySelector('strong').textContent=seasons[s].name+' · '+(s===3&&p.potted?'设施内结构对照':s===3&&['草本','水生'].includes(p.category)?'残茎与休眠':s===3&&p.evergreen?'常绿枝叶':seasons[s].verb);});
+  const label=`${p.name} / ${seasons[state.season].name} / ${organs.find(o=>o.id===state.organ).name}`;
+  stage.setAttribute('aria-label',`${label}。左右方向键切换季节，上下方向键切换植物，空格键暂停或播放。`);
+  if(manual)q('[data-announcement]').textContent=label;syncPlay();
+ }
+ function cancel(){if(state.frame)cancelAnimationFrame(state.frame);state.frame=0;state.last=0;}
+ function draw(dt=0){
+  const wanted=key();let moving=false;
+  for(const p of plates){const target=p.key===wanted?1:0;p.alpha=reduced.matches?target:p.alpha+(target-p.alpha)*(1-Math.exp(-dt/.17));if(Math.abs(p.alpha-target)<.001)p.alpha=target;else moving=true;p.el.setAttribute('opacity',p.alpha.toFixed(4));p.el.style.visibility=p.alpha>.001?'visible':'hidden';}
+  plates=plates.filter(p=>{if(p.alpha===0&&p.key!==wanted){p.el.remove();return false;}return true;});
+  lensLayers=lensLayers.filter(layer=>{const target=layer.key===lensKey?1:0;layer.alpha=reduced.matches?target:layer.alpha+(target-layer.alpha)*(1-Math.exp(-dt/.14));if(Math.abs(layer.alpha-target)<.001)layer.alpha=target;else moving=true;layer.el.setAttribute('opacity',layer.alpha.toFixed(4));if(layer.alpha===0&&!target){layer.el.remove();return false;}return true;});
+  state.angle=reduced.matches?state.targetAngle:state.angle+(state.targetAngle-state.angle)*(1-Math.exp(-dt/.24));if(Math.abs(state.angle-state.targetAngle)<.001)state.angle=state.targetAngle;else moving=true;
+  const d=window.TAORAN_DIAL,origin=BOTANY_DIAL_CENTER;
+  // Only the printed marks rotate in the top plane; the round carrier has invariant geometry.
+  dial.setAttribute('transform',`translate(${origin[0]} ${origin[1]}) matrix(${DIAL_BASIS.join(' ')}) rotate(${-state.angle*180/Math.PI}) matrix(${DIAL_INVERSE.join(' ')}) translate(${-origin[0]} ${-origin[1]})`);
+  q('[data-readout]').textContent=`${plants[state.plant].name} / ${seasons[state.season].name} / ${moving?'换页中…':organs.find(o=>o.id===state.organ).name}`;
+  return moving;
+ }
+ function tick(now){state.frame=0;const dt=state.last?Math.min((now-state.last)/1000,1/30):1/60;state.last=now;
+  if(state.playing&&!state.hover){state.clock+=dt;if(state.clock>=8.2){state.clock=0;choose({season:(state.season+1)%4},false);return;}}
+  const moving=draw(dt);if((moving||(state.playing&&!state.hover))&&state.visible&&!document.hidden&&!reduced.matches)state.frame=requestAnimationFrame(tick);
+ }
+ function run(){if(!state.frame&&state.visible&&!document.hidden&&!reduced.matches){state.last=0;state.frame=requestAnimationFrame(tick);}}
+ function choose(next,user=true){
+  const changesScope=(next.plant!==undefined&&next.plant!==state.plant)||(next.season!==undefined&&next.season!==state.season);if(changesScope)draft();
+  if(user){manual=true;stopTour();}
+  if(next.plant!==undefined)state.plant=(Number(next.plant)+plants.length)%plants.length;
+  if(next.organ!==undefined&&organs.some(o=>o.id===next.organ))state.organ=next.organ;
+  if(next.season!==undefined){state.season=(Number(next.season)+4)%4;const desired=state.season*Math.PI/2;let delta=(desired-state.targetAngle)%(Math.PI*2);if(delta>Math.PI)delta-=Math.PI*2;if(delta<-Math.PI)delta+=Math.PI*2;state.targetAngle+=delta;}
+  describe();if(changesScope)loadNote();draw();run();
+ }
+ // An affine basis maps planar rotation into the same isometric camera as the printed disc.
+ const {center:BOTANY_DIAL_CENTER,basis:DIAL_BASIS,inverse:DIAL_INVERSE}=window.TAORAN_DIAL_VIEW;
+ qa('[data-plant]').forEach(b=>b.addEventListener('click',()=>choose({plant:Number(b.dataset.plant)})));
+ q('#plant-picker').addEventListener('change',e=>choose({plant:Number(e.target.value)}));
+ q('#plant-prev').addEventListener('click',()=>choose({plant:state.plant-1}));q('#plant-next').addEventListener('click',()=>choose({plant:state.plant+1}));
+ qa('[data-season],[data-year],[data-record-season]').forEach(b=>b.addEventListener('click',()=>choose({season:Number(b.dataset.season??b.dataset.year??b.dataset.recordSeason)})));
+ qa('[data-organ]').forEach(b=>b.addEventListener('click',()=>choose({organ:b.dataset.organ})));
+ q('#tour').addEventListener('click',()=>{state.playing=!state.playing&&!reduced.matches;state.clock=0;syncPlay();run();});
+ stage.addEventListener('pointerenter',()=>{state.hover=true;});stage.addEventListener('pointerleave',()=>{state.hover=document.activeElement===stage;run();});
+ stage.addEventListener('focus',()=>{state.hover=true;});stage.addEventListener('blur',()=>{state.hover=false;run();});
+ stage.addEventListener('keydown',e=>{const keys=['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End',' '];if(!keys.includes(e.key))return;e.preventDefault();if(e.key==='ArrowLeft')choose({season:(state.season+3)%4});else if(e.key==='ArrowRight')choose({season:(state.season+1)%4});else if(e.key==='ArrowUp')choose({plant:(state.plant+plants.length-1)%plants.length});else if(e.key==='ArrowDown')choose({plant:(state.plant+1)%plants.length});else if(e.key==='Home')choose({season:0});else if(e.key==='End')choose({season:3});else q('#tour').click();});
+ q('#theme').addEventListener('click',()=>{const dark=document.body.dataset.theme!=='dark';document.body.dataset.theme=dark?'dark':'light';q('#theme').textContent=dark?'☀':'☾';q('#theme').setAttribute('aria-label',`切换${dark?'浅':'深'}色主题`);});
+ new IntersectionObserver(entries=>{state.visible=entries.at(-1).isIntersecting;if(state.visible)run();else cancel();},{threshold:.08}).observe(stage);
+ document.addEventListener('visibilitychange',()=>{cancel();if(!document.hidden)run();});
+ reduced.addEventListener('change',()=>{q('#tour').disabled=reduced.matches;if(reduced.matches){stopTour();cancel();draw();}else run();});
+ q('#tour').disabled=reduced.matches;
+ for(const block of [form,q('.quiz')])block.addEventListener('focusin',stopTour);
+ let quizIndex=0,answered=false,quizChoices=[];
+ function renderQuiz(){
+  const [p,o]=quizItems[quizIndex],plant=plants[p];
+  q('[data-quiz-art]').innerHTML=BOTANY.organSvg(p,o,o==='flower'?(plant.bloom[0]??2):2).replace(/aria-label="[^"]*"/,'aria-label="待辨认植物的局部形态"');
+  const hint=plant.clues[o].replaceAll(plant.name,'这一种');q('[data-quiz-description]').textContent=hint;q('[data-quiz-hint]').textContent=hint;
+  q('[data-quiz-number]').textContent='CLUE '+String(quizIndex+1).padStart(2,'0')+' / '+quizItems.length;q('[data-quiz-type]').textContent=organs.find(x=>x.id===o).name;
+  const key=i=>i<4?'original-'+i+'-'+o:plants[i].draw[o]+(o==='leaf'&&plants[i].draw.n?plants[i].draw.n:'');
+  const others=plants.map((_,i)=>(i+quizIndex*7+5)%plants.length).filter((i,j,arr)=>i!==p&&key(i)!==key(p)&&arr.indexOf(i)===j).slice(0,3);
+  quizChoices=[p,...others];const turn=quizIndex%4;quizChoices=quizChoices.slice(turn).concat(quizChoices.slice(0,turn));
+  qa('[data-answer]').forEach((b,i)=>{b.dataset.answer=String(quizChoices[i]);b.dataset.answerIndex=String(quizChoices[i]);b.textContent=plants[quizChoices[i]].name;b.removeAttribute('data-result');b.classList.remove('answer-yes','answer-no');});
+  q('[data-feedback]').textContent='选一个名字，再对照辨认线索。';q('[data-feedback]').dataset.result='';q('#return-plant').disabled=true;answered=false;
+ }
+ qa('[data-answer]').forEach(b=>{b.dataset.answerIndex=b.dataset.answer;b.addEventListener('click',()=>{stopTour();const [p,o]=quizItems[quizIndex],correct=Number(b.dataset.answerIndex)===p;qa('[data-answer]').forEach(x=>x.removeAttribute('data-result'));b.dataset.result=correct?'yes':'no';q('[data-feedback]').textContent=correct?`认出来了，是${plants[p].name}。${plants[p].clues[o]}`:`再看一处：${plants[p].clues[o]}`;q('[data-feedback]').dataset.result=correct?'correct':'try';if(correct){answered=true;q('#return-plant').disabled=false;}});});
+ q('#next-clue').addEventListener('click',()=>{stopTour();quizIndex=(quizIndex+1)%quizItems.length;renderQuiz();});
+ q('#return-plant').addEventListener('click',()=>{if(!answered)return;const [p,o]=quizItems[quizIndex];choose({plant:p,season:2,organ:o});q('#observe').scrollIntoView({block:'start',behavior:reduced.matches?'auto':'smooth'});stage.focus({preventScroll:true});});
+ form.addEventListener('submit',e=>{e.preventDefault();stopTour();if(!form.place.value.trim()&&!form.note.value.trim()){q('[data-note-status]').textContent='先写一点位置或观察发现。';form.place.focus();return;}draft();notes[key()]={...drafts[key()],plant:plants[state.plant].name,season:seasons[state.season].name};try{localStorage.setItem(storageKey,JSON.stringify(notes));storageOK=true;}catch{storageOK=false;}loadNote();q('[data-note-status]').textContent=storageOK?'已保存。下次在这个浏览器里还能找到。':'浏览器未允许保存，记录暂留本页；请复制留存。';});
+ window.taoran={choose:(p,s,o)=>choose({plant:p,season:s,organ:o}),pause:()=>{stopTour();run();},get state(){return {...state,notes:Object.keys(notes).length,quizIndex,answered,plateAlphas:plates.map(p=>({key:p.key,alpha:p.alpha})),quizTotal:quizItems.length,quizChoices:[...quizChoices]};}};
+
+ let catalogCategory='all',catalogExpanded=false;
+ const catalogCards=qa('[data-catalog-card]');
+ function filterCatalog(){
+  const term=q('#plant-search').value.trim().toLocaleLowerCase();
+  const matches=catalogCards.filter(card=>{const p=plants[Number(card.dataset.catalogCard)],hay=[p.name,p.latin,p.identity,p.category,...Object.values(p.part).map(v=>v.join(' '))].join(' ').toLocaleLowerCase();return (catalogCategory==='all'||p.category===catalogCategory)&&(!term||hay.includes(term));});
+  catalogCards.forEach(card=>card.hidden=true);matches.slice(0,catalogExpanded?matches.length:12).forEach(card=>card.hidden=false);
+  qa('[data-category]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.category===catalogCategory)));
+  q('#catalog-results').textContent=(catalogCategory==='all'?'全部类型':catalogCategory)+' · 找到 '+matches.length+' 项'+(matches.length>12&&!catalogExpanded?'，先显示 12 项':'');
+  q('.catalog-empty').hidden=matches.length!==0;q('#catalog-more').hidden=catalogExpanded||matches.length<=12;q('#catalog-more').textContent='展开这 '+matches.length+' 个观察条目 ↓';
+  q('#clear-search').hidden=!term;
+ }
+ q('#plant-search').addEventListener('input',()=>{stopTour();catalogExpanded=false;filterCatalog();});
+ q('#clear-search').addEventListener('click',()=>{q('#plant-search').value='';catalogExpanded=false;filterCatalog();q('#plant-search').focus();});
+ qa('[data-category]').forEach(b=>b.addEventListener('click',()=>{stopTour();catalogCategory=b.dataset.category;catalogExpanded=false;filterCatalog();}));
+ q('#catalog-more').addEventListener('click',()=>{stopTour();catalogExpanded=true;filterCatalog();});
+ catalogCards.forEach(card=>card.addEventListener('click',()=>{q('#observe').scrollIntoView({block:'start',behavior:reduced.matches?'auto':'smooth'});stage.focus({preventScroll:true});}));
+ filterCatalog();
+
+ describe();loadNote();renderQuiz();draw();run();
+})();
