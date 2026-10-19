@@ -6,7 +6,8 @@
   "scripts": {
     "build": "node build.mjs && node scripts/publish.mjs",
     "audit": "node build.mjs --audit",
-    "test:photos": "node tests/photo-catalog.mjs"
+    "test:photos": "node tests/photo-catalog.mjs",
+    "test:product": "node tests/product.mjs"
   },
   "engines": {
     "node": ">=20.10"

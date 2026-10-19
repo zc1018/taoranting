@@ -5,6 +5,10 @@ node_modules/
 .DS_Store
 /index.html
 /index-dark.html
+/plant.html
+/plant-dark.html
+/recognise.html
+/recognise-dark.html
 /taoranting-light.svg
 /taoranting-dark.svg
 /taoranting-plant-catalog.csv

@@ -1,30 +1,39 @@
-# 陶然亭 · 四时识木
+# 陶然亭植物指南 · 四时识木
 
-支持离线浏览的植物观察手帖。线上访问：https://taoranting.vercel.app/ 。下载后保留整个 `public/` 目录，打开 `public/index.html`；`public/index-dark.html` 为深色初始主题。照片位于 `public/photos/`，离线时请与 HTML 一起保留。无需安装依赖。
+用于查找、观察和学习辨认陶然亭植物的静态网站。正式站点：https://taoranting.vercel.app/ 。使用真实照片作为查找和练习的主要视觉内容，保留纸色与植物图解。
 
-现有 58 个观察条目，按乔木、灌木、草本、藤本、水生与竹类浏览。条目包括物种、属级与园艺类群，不能等同于 58 个已核实的现存物种。
+## 使用
 
-- 每个观察条目附两张真实照片，共 116 张。名录卡片直接预览实拍，点击后回到同一个观察对照台；图版、实拍和辨认线索共用植物、季节与部位选择。照片可放大，保留完整比例和摄影、许可、原图链接。
-- 在观察匣下拉框选植物，或从植物名录按名称、学名、叶形与花果线索搜索。
-- 名录按六类筛选；先展示 12 个代表条目，可展开全部。点击条目回到观察匣。
-- 切换春夏秋冬和叶、枝茎、花、果种；按逐张核对的照片内容优先切换到当前部位的实拍，缺少该部位细节时如实提示。照片不冒充所选季节的现场实况。
-- 40 道局部辨认题，每题四个名字并有补充线索，答对后返回观察匣。
-- 按植物和季节独立保存观察记录，沿用旧版索引与存储键。
-- 页面提供带来源、日期和四类线索的 CSV 下载：taoranting-plant-catalog.csv 。
+- `index.html`：植物查找。按名称、学名、别名或形态特征搜索，按六类筛选；可展开全部 58 个观察条目。搜索和筛选保存在 URL，浏览器返回后可恢复。
+- `plant.html?plant=ginkgo&organ=leaf&season=2`：植物详情。实拍、形态图解与辨认要点共用植物、部位和季节控制；可放大照片、切换视图并进入练习。季节编号 0–3 对应春夏秋冬，四季轮播默认关闭。
+- `recognise.html`：独立实拍辨认练习。每轮随机抽取 5 个不同植物，每题四个名字。选一次即揭晓答案，并排对照实拍与局部图解，查看判断依据；完成后回顾本轮、进入详情或再来一轮。
+- `recognise.html?plant=ginkgo`：若题库覆盖此植物，优先从它开始；未覆盖时进入普通练习。目前保留 28 道已逐张核对实拍部位的题目，涉及 24 个植物条目，避免用未展示题目部位的照片出题。
+- 三个页面均有对应的 `-dark.html` 深色初始主题，也可在页面内切换。主题随浏览器保存，在页面之间沿用。
 
-每条附园内出现依据，保留历史调查、移除记录、盆景和季节展陈的区别。青桐、栾树、刺槐的移除记录不作现存单株导航。紫叶李与红叶李合并，园艺品种不拆成多个物种。未细定到种的竹类、睡莲等保留组级名称；未核实的花果不补成确定图示。
+旧版 `#observe` 链接转到详情，`#recognise` 转到独立练习。原观察记录区已移除；旧浏览器存储不会被读取、覆盖或清除。
 
-实拍照片来自 Wikimedia Commons，用于形态对照，非陶然亭现场照片。属级和园艺类群使用明确标注对象的代表照片，不把示例种或品种认定为园内对象。花期、拍摄地点与具体植株以原图资料及现场树牌核对。完整署名见 [照片来源与许可](photos/CREDITS.md)。
+## 内容与照片
 
-植物图版是典型结构示意，不是自动识别或当前园内物候。原有 66 部件的观察匣仅保留当前与过渡图版，避免随条目数增长而加载几百张隐藏 SVG。
+58 个观察条目涵盖乔木、灌木、草本、藤本、水生与竹类，包含物种、属级和园艺类群，不能等同于 58 个已核实的现存物种。公开记载、历史调查、移除记录及季节展陈保留来源与年份；历史移除对象不作为现存单株导航。
 
-构建：npm run build 。实体审计：npm run build --audit 。
-图版检查页：node qa-build.mjs 。照片完整性检查：`npm run test:photos`（先运行构建）。验证详情见 QA.md。
+每个条目两张真实照片，共 116 张，来自 Wikimedia Commons，完整署名和许可见 [照片来源](photos/CREDITS.md)。照片用于形态对照，非陶然亭现场或当前季节实况。属级和园艺类群标注代表照片的具体对象，园内具体种与品种须结合树牌核对。每张照片的可见部位经独立标注，缺少对应部位时明确提示。
+
+植物图版是典型结构示意，不是自动识别或园内物候实测。资料说明与带来源的 CSV 名录在页尾。
+
+## 开发与离线
+
+无需安装依赖，Node.js 20.10 或以上。
+
+```sh
+npm run build
+npm run test:photos
+npm run test:product
+```
+
+构建输出到 `public/`。保留整个目录即可离线使用；打开 `public/index.html`，照片目录和其余 HTML 页面不能拆开。验证记录见 [QA.md](QA.md)。
 
 ## Vercel
 
-Output directory: `public`. Build command: `npm run build`. No dependencies or environment variables are required. Import this repository into Vercel with the Other framework preset.
+Build command：`npm run build`。Output directory：`public`。Other framework preset，无依赖或环境变量。GitHub `main` 已连接现有 Vercel 项目，更新主分支自动构建正式站点。
 
-The SVG toolkit in `kit/` is from [Anatomy](https://github.com/wheresryan22/anatomy); its MIT license is preserved in `kit/LICENSE`.
-
-GitHub main is connected to the Vercel production project. Pushes to main trigger a production build and deployment.
+`kit/` 内的 SVG 工具来自 [Anatomy](https://github.com/wheresryan22/anatomy)，保留其 MIT 许可。照片依各自文件许可使用。

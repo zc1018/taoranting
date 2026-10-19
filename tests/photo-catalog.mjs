@@ -41,7 +41,7 @@ assert.equal(preferredPhotoIndex(plantPhotos.ginkgo,'leaf'),1,'Fan-shaped leaf p
 assert.equal(preferredPhotoIndex(plantPhotos.honeysuckle,'flower'),0);
 assert.equal(preferredPhotoIndex(plantPhotos.honeysuckle,'fruit'),1,'Fruit observation should select the red-berry photograph');
 assert.equal(preferredPhotoIndex(plantPhotos.ginkgo,'fruit',1),1,'Do not fabricate a fruit photograph when coverage is missing');
-for(const page of ['public/index.html','public/index-dark.html']){
+for(const page of ['public/plant.html','public/plant-dark.html']){
  const html=readFileSync(new URL('../'+page,import.meta.url),'utf8');
  assert.ok(html.includes('id="photos"')&&html.includes('id="photo-dialog"'));
  for(const plant of plants)for(const photo of plantPhotos[plant.id].photos){
